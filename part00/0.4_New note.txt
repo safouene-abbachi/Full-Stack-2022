@@ -27,3 +27,8 @@ server-->browser: data.json [{ content: "HTML is easy", date: "2019-05-23" }, ..
 note over browser: 
 browser re-render
 end note
+
+
+
+
+
