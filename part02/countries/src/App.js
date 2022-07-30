@@ -5,16 +5,19 @@ function App() {
   const [search, setSearch] = useState('');
   const [countries, setCountries] = useState([]);
   const [selectedCounty, setSelectedCountry] = useState('');
+  const [weather, setWeather] = useState({});
   console.log('🚀 ~ countries', countries);
 
-  const handleClick = (countryName) => {
-    setSelectedCountry(countryName);
+  const handleClick = (country) => {
+    const { name } = country;
+    setSelectedCountry(name?.common);
   };
-
+  console.log('🚀 ~ weather', weather);
   const filtredCountries = useMemo(() => {
     const returnedCountries = countries.filter((country) =>
       country?.name?.common.toLowerCase().includes(search.toLowerCase())
     );
+    console.log('🚀 ~ returnedCountries', returnedCountries);
     if (!search) {
       return [];
     }
@@ -27,9 +30,7 @@ function App() {
         <div key={country?.name?.common}>
           <h2>
             {country?.name?.common}{' '}
-            <button onClick={() => handleClick(country?.name?.common)}>
-              show
-            </button>
+            <button onClick={() => handleClick(country)}>show</button>
           </h2>
           {selectedCounty === country?.name?.common && (
             <div key={country?.name?.common}>
@@ -56,6 +57,26 @@ function App() {
       ));
     }
     if (returnedCountries.length === 1) {
+      const { latlng } = returnedCountries[0];
+
+      axios
+        .get(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${latlng[0]}&lon=${latlng[1]}&appid=8d4705621d1bec7ba207a07b7f92396f`
+        )
+        .then(({ data }) => {
+          console.log('🚀 ~ response', data);
+
+          setWeather({
+            ...weather,
+            celciusTemp: (data.main.temp - 273.15).toFixed(2),
+            wind: data.wind.speed,
+            icon: data.weather[0].icon,
+          });
+        })
+
+        .catch((error) => {
+          console.log('🚀 ~ error', error);
+        });
       return returnedCountries.map((country) => (
         <div key={country?.name?.common}>
           <h2>{country?.name?.common}</h2>
@@ -76,6 +97,13 @@ function App() {
             src={country?.flags['svg']}
             alt={country?.name?.common}
           />
+          <h1>Weather in {country?.capital[0]}</h1>
+          <p>temperature {weather['celciusTemp']} celcius</p>
+          <img
+            src={`http://openweathermap.org/img/w/${weather['icon']}.png`}
+            alt="weather icon"
+          />
+          <p>Wind {weather['wind']} m/s</p>
         </div>
       ));
     }
