@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-
+const API_KEY = process.env.REACT_APP_API_KEY;
 function App() {
   const [search, setSearch] = useState('');
   const [countries, setCountries] = useState([]);
@@ -61,7 +61,7 @@ function App() {
 
       axios
         .get(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latlng[0]}&lon=${latlng[1]}&appid=8d4705621d1bec7ba207a07b7f92396f`
+          `https://api.openweathermap.org/data/2.5/weather?lat=${latlng[0]}&lon=${latlng[1]}&appid=${API_KEY}`
         )
         .then(({ data }) => {
           console.log('🚀 ~ response', data);
