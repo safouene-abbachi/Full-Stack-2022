@@ -13,7 +13,7 @@ const App = () => {
   const [searchField, setSearchField] = useState('');
   const [confirmationMessage, setConfirmationMessage] = useState('');
   const [notifType, setNotifType] = useState('');
-
+  const baseUrl = 'https://intense-inlet-79535.herokuapp.com/api/persons';
   const handleSubmit = (e) => {
     e.preventDefault();
     const existingName = persons.find((person) => person.name === newName);
@@ -106,7 +106,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then((response) => {
+    axios.get(baseUrl).then((response) => {
       setPersons(response.data);
     });
   }, []);
