@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import './App.css';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import Notification from './components/Notification';
 import axios from 'axios';
-import { addNote, deletePerson, updatedNumebr } from './services/personService';
+import { addNote, deletePerson, updateNumber } from './services/personService';
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
@@ -14,17 +14,20 @@ const App = () => {
   const [confirmationMessage, setConfirmationMessage] = useState('');
   const [notifType, setNotifType] = useState('');
   const baseUrl = 'https://intense-inlet-79535.herokuapp.com/api/persons';
+  // const baseUrl = 'http://localhost:3001/api/persons';
   const handleSubmit = (e) => {
     e.preventDefault();
     const existingName = persons.find((person) => person.name === newName);
-    if (existingName) {
+    console.log('🚀 ~ existingName', existingName);
+    if (existingName && existingName?.number !== newNumber) {
       if (
         window.confirm(
           `${newName} is already added to phonebook, replace the old number with a new one?`
         )
       ) {
-        updatedNumebr(existingName.id, newNumber)
+        updateNumber(existingName.id, newNumber)
           .then((updatedPerson) => {
+            console.log('🚀 ~ updatedPerson', updatedPerson);
             const updatedPersons = persons.map((person) => {
               if (person.id === updatedPerson.id) {
                 return {
@@ -62,7 +65,12 @@ const App = () => {
           }, 5000);
         })
         .catch((error) => {
-          alert(error);
+          setNotifType('error');
+          setConfirmationMessage(error.response.data.error);
+          setTimeout(() => {
+            setConfirmationMessage('');
+          }, 5000);
+          // alert(error.response.data.error);
         });
     }
   };
@@ -87,6 +95,7 @@ const App = () => {
     setSearchField(e.target.value);
   };
   console.log({ filtredPersons });
+
   const handleDelete = (id, name) => {
     if (window.confirm(`Are you sure you want to delete ${name}?`)) {
       deletePerson(id)
