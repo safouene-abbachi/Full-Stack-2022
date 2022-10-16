@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit';
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -19,11 +21,16 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject);
 
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'ADD_VOTE':
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    createNew(state, action) {
+      state.push({ content: action.payload, id: getId(), votes: 0 });
+    },
+    voteAnecdote(state, action) {
       return state.map((anecdote) => {
-        if (action.id === anecdote.id) {
+        if (action.payload === anecdote.id) {
           return {
             ...anecdote,
             votes: anecdote.votes + 1,
@@ -31,25 +38,42 @@ const reducer = (state = initialState, action) => {
         }
         return anecdote;
       });
-    case 'NEW_ANECDOTE':
-      return [...state, { content: action.data, id: getId(), votes: 0 }];
+    },
+  },
+});
 
-    default:
-      return state;
-  }
-};
+// const reducer = (state = initialState, action) => {
+//   switch (action.type) {
+//     case 'ADD_VOTE':
+//       return state.map((anecdote) => {
+//         if (action.id === anecdote.id) {
+//           return {
+//             ...anecdote,
+//             votes: anecdote.votes + 1,
+//           };
+//         }
+//         return anecdote;
+//       });
+//     case 'NEW_ANECDOTE':
+//       return [...state, { content: action.data, id: getId(), votes: 0 }];
 
-export const voteAnecdote = (id) => {
-  return {
-    type: 'ADD_VOTE',
-    id,
-  };
-};
-export const createNew = (data) => {
-  return {
-    type: 'NEW_ANECDOTE',
-    data,
-  };
-};
+//     default:
+//       return state;
+//   }
+// };
 
-export default reducer;
+// export const voteAnecdote = (id) => {
+//   return {
+//     type: 'ADD_VOTE',
+//     id,
+//   };
+// };
+// export const createNew = (data) => {
+//   return {
+//     type: 'NEW_ANECDOTE',
+//     data,
+//   };
+// };
+
+export const { createNew, voteAnecdote } = anecdoteSlice.actions;
+export default anecdoteSlice.reducer;
