@@ -7,28 +7,47 @@ import {
 } from '../reducers/notificationReducer';
 const AnecdoteList = () => {
   const anecdotes = useSelector((state) => state.anecdotes);
+  const filterValue = useSelector((state) => state.filter);
+
   const dispatch = useDispatch();
+
+  const filtredAnecdotes = () => {
+    if (filterValue) {
+      return [...anecdotes]
+        .filter((anecdote) =>
+          anecdote.content
+            .toLocaleLowerCase()
+            .includes(filterValue.toLocaleLowerCase())
+        )
+        .sort((a, b) => (a.votes > b.votes ? -1 : 1));
+    }
+    return [...anecdotes].sort((a, b) => (a.votes > b.votes ? -1 : 1));
+  };
 
   const vote = (id, content) => {
     dispatch(voteAnecdote(id));
-    dispatch(setNotifications(`you voted '${content}'`));
-    dispatch(removeNotification());
+    dispatch(
+      setNotifications({
+        message: `you voted '${content}'`,
+        delay: setTimeout(() => {
+          dispatch(removeNotification());
+        }, 5000),
+      })
+    );
   };
   return (
     <div>
-      {[...anecdotes]
-        .sort((a, b) => (a.votes > b.votes ? -1 : 1))
-        .map((anecdote) => (
-          <div key={anecdote.id}>
-            <div>{anecdote.content}</div>
-            <div>
-              has {anecdote.votes}
-              <button onClick={() => vote(anecdote.id, anecdote.content)}>
-                vote
-              </button>
-            </div>
+      {filtredAnecdotes().map((anecdote) => (
+        <div key={anecdote.id}>
+          <div>{anecdote.content}</div>
+          <div>
+            has {anecdote.votes}
+            <button onClick={() => vote(anecdote.id, anecdote.content)}>
+              vote
+            </button>
           </div>
-        ))}
+        </div>
+      ))}
     </div>
   );
 };

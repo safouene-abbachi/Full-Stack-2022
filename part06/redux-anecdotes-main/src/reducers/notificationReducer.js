@@ -13,13 +13,12 @@ const notificationSlice = createSlice({
       if (state.delay) clearTimeout(state.delay);
       return {
         ...state,
-        message: action.payload,
+        message: action.payload.message,
+        delay: action.payload.delay,
       };
     },
     removeNotification(state, action) {
-      setTimeout(() => {
-        return initialState.message;
-      }, 5000);
+      return initialState.message;
     },
   },
 });

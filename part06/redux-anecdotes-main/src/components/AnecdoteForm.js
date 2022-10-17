@@ -11,8 +11,14 @@ const AnecdoteForm = () => {
     e.preventDefault();
     const newAnecdote = e.target.anecdote.value;
     dispatch(createNew(newAnecdote));
-    dispatch(setNotifications(`You just created '${e.target.anecdote.value}'`));
-    dispatch(removeNotification(''));
+    dispatch(
+      setNotifications({
+        message: `You just created '${e.target.anecdote.value}'`,
+        delay: setTimeout(() => {
+          dispatch(removeNotification());
+        }, 5000),
+      })
+    );
   };
   return (
     <div>
