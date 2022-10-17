@@ -5,12 +5,17 @@ import {
   setNotifications,
   removeNotification,
 } from '../reducers/notificationReducer';
+import { createAnecdote } from '../services/anecdote';
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
-  const createNewAnecdote = (e) => {
+  const createNewAnecdote = async (e) => {
     e.preventDefault();
     const newAnecdote = e.target.anecdote.value;
-    dispatch(createNew(newAnecdote));
+
+    const result = await createAnecdote({ content: newAnecdote, votes: 0 });
+    e.target.anecdote.value = '';
+
+    dispatch(createNew(result));
     dispatch(
       setNotifications({
         message: `You just created '${e.target.anecdote.value}'`,
@@ -20,6 +25,7 @@ const AnecdoteForm = () => {
       })
     );
   };
+
   return (
     <div>
       <h2>create new</h2>
@@ -27,7 +33,7 @@ const AnecdoteForm = () => {
         <div>
           <input name="anecdote" />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
       </form>
     </div>
   );

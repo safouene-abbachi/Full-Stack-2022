@@ -12,16 +12,13 @@ const AnecdoteList = () => {
   const dispatch = useDispatch();
 
   const filtredAnecdotes = () => {
-    if (filterValue) {
-      return [...anecdotes]
-        .filter((anecdote) =>
-          anecdote.content
-            .toLocaleLowerCase()
-            .includes(filterValue.toLocaleLowerCase())
-        )
-        .sort((a, b) => (a.votes > b.votes ? -1 : 1));
-    }
-    return [...anecdotes].sort((a, b) => (a.votes > b.votes ? -1 : 1));
+    return anecdotes
+      .filter((anecdote) =>
+        anecdote.content
+          .toLocaleLowerCase()
+          .includes(filterValue.toLocaleLowerCase())
+      )
+      .sort((a, b) => (a.votes > b.votes ? -1 : 1));
   };
 
   const vote = (id, content) => {

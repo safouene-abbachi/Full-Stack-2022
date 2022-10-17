@@ -23,10 +23,10 @@ const initialState = anecdotesAtStart.map(asObject);
 
 const anecdoteSlice = createSlice({
   name: 'anecdotes',
-  initialState,
+  initialState: [],
   reducers: {
     createNew(state, action) {
-      state.push({ content: action.payload, id: getId(), votes: 0 });
+      state.push(action.payload);
     },
     voteAnecdote(state, action) {
       return state.map((anecdote) => {
@@ -39,41 +39,12 @@ const anecdoteSlice = createSlice({
         return anecdote;
       });
     },
+    getAllAnecdotes(state, action) {
+      return action.payload;
+    },
   },
 });
 
-// const reducer = (state = initialState, action) => {
-//   switch (action.type) {
-//     case 'ADD_VOTE':
-//       return state.map((anecdote) => {
-//         if (action.id === anecdote.id) {
-//           return {
-//             ...anecdote,
-//             votes: anecdote.votes + 1,
-//           };
-//         }
-//         return anecdote;
-//       });
-//     case 'NEW_ANECDOTE':
-//       return [...state, { content: action.data, id: getId(), votes: 0 }];
-
-//     default:
-//       return state;
-//   }
-// };
-
-// export const voteAnecdote = (id) => {
-//   return {
-//     type: 'ADD_VOTE',
-//     id,
-//   };
-// };
-// export const createNew = (data) => {
-//   return {
-//     type: 'NEW_ANECDOTE',
-//     data,
-//   };
-// };
-
-export const { createNew, voteAnecdote } = anecdoteSlice.actions;
+export const { createNew, voteAnecdote, getAllAnecdotes } =
+  anecdoteSlice.actions;
 export default anecdoteSlice.reducer;
