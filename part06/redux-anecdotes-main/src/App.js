@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { getAllAnecdotes } from './reducers/anecdoteReducer';
-import { getAll } from './services/anecdote';
+import { initilizeAnecdote } from './reducers/anecdoteReducer';
 import AnecdoteForm from './components/AnecdoteForm';
 import AnecdoteList from './components/AnecdoteList';
 import Filter from './components/Filter';
@@ -11,9 +10,7 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      const result = await getAll();
-      console.log('🚀 ~ result', result);
-      dispatch(getAllAnecdotes(result));
+      dispatch(initilizeAnecdote());
     })();
   }, [dispatch]);
 
