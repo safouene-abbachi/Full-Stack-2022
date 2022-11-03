@@ -5,6 +5,7 @@ import {
   Route,
   Routes,
   useParams,
+  useNavigate,
 } from 'react-router-dom';
 const Menu = () => {
   const padding = {
@@ -93,7 +94,7 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
   const [info, setInfo] = useState('');
-
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
@@ -102,6 +103,7 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     });
+    navigate('/');
   };
 
   return (
@@ -155,12 +157,22 @@ const App = () => {
       id: 2,
     },
   ]);
-
   const [notification, setNotification] = useState('');
+  const [timer, setTimer] = useState(null);
+
+  const showNotification = (message) => {
+    if (timer) clearTimeout(timer);
+    setNotification(`Successfull creation of ${message}`);
+    const timerId = setTimeout(() => {
+      setNotification('');
+    }, 5000);
+    setTimer(timerId);
+  };
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
+    showNotification(anecdote.content);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -175,10 +187,19 @@ const App = () => {
 
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
-
+  const successStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: '20px',
+    borderStyle: 'solid',
+    borderRadius: '5px',
+    padding: '10px',
+    marginBottom: '10px',
+  };
   return (
     <>
       <h1>Software anecdotes</h1>
+      {notification && <div style={successStyle}>{notification}</div>}
       <Router>
         <Menu />
         <Routes>
